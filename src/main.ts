@@ -9,10 +9,10 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('Tweetero - Rest API Documentation')
-    .setDescription('Tweetero Rest API Documentation')
+    .setTitle('DrivenPass - Rest API Documentation')
+    .setDescription('DrivenPass Rest API Documentation')
     .setVersion('1.0')
-    .addTag('tweetero')
+    .addTag('drivenpass-nest')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
