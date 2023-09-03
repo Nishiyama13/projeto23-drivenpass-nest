@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import Cryptr from 'cryptr';
@@ -44,13 +49,25 @@ export class NotesService {
     notes = await this.notesRepository.getNotesByUserId(userId);
     return this.formatNotes(notes);
   }
+  //getNotesByNoteId
 
-  findOne(id: number) {
-    return `This action returns a #${id} note`;
+  async getNotesByNoteId(user: User, id: number) {
+    const note = await this.notesRepository.getNotesByNoteId(id);
+    if (!note) throw new NotFoundException('Note not found');
+    if (user.id !== note.userId) {
+      throw new ForbiddenException('This note does not belong to this user');
+    }
+
+    return {
+      id: note.id,
+      title: note.title,
+      text: this.cryptr.decrypt(note.text),
+      userId: id,
+    };
   }
 
   update(id: number, updateNoteDto: UpdateNoteDto) {
-    return `This action updates a #${id} note`;
+    return `This action updates a #${id} note ${updateNoteDto}`;
   }
 
   remove(id: number) {

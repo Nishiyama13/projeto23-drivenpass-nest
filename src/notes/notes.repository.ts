@@ -40,12 +40,17 @@ export class NotesRepository {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} note`;
+  getNotesByNoteId(id: number) {
+    return this.prisma.note.findUnique({
+      where: { id },
+      include: {
+        user: true,
+      },
+    });
   }
 
   update(id: number, updateNoteDto: UpdateNoteDto) {
-    return `This action updates a #${id} note`;
+    return `This action updates a #${id} note ${updateNoteDto}`;
   }
 
   remove(id: number) {

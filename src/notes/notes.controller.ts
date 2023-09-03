@@ -38,8 +38,8 @@ export class NotesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notesService.findOne(+id);
+  async getNotesByNoteId(@User() user: UserPrisma, @Param('id') id: string) {
+    return await this.notesService.getNotesByNoteId(user, +id);
   }
 
   @Patch(':id')
