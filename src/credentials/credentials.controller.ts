@@ -40,8 +40,9 @@ export class CredentialsController {
   }
 
   @Get()
-  findAll() {
-    return this.credentialsService.findAll();
+  @UseGuards(AuthGuard)
+  async findAllCredentialByUser(@User() user: UserPrisma) {
+    return await this.credentialsService.getCredentialsByUserId(user);
   }
 
   @Get(':id')
