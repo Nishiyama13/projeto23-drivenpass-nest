@@ -43,8 +43,13 @@ export class CredentialsRepository {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} credential`;
+  getCredentialsByCredentialId(id: number) {
+    return this.prisma.credential.findUnique({
+      where: { id },
+      include: {
+        user: true,
+      },
+    });
   }
 
   update(id: number, updateCredentialDto: UpdateCredentialDto) {
@@ -55,41 +60,3 @@ export class CredentialsRepository {
     return `This action removes a #${id} credential`;
   }
 }
-/*
-  private SALT = 10;
-  private cryptor: Cryptr;
-
-  constructor(private readonly prisma: PrismaService) {}
-
-  async createCredential(user: User, credential: CreateCredentialDto) {
-    return this.prisma.credential.create({
-      data: {
-        ...credential,
-        sitePassword: bcrypt.hashSync(credential.sitePassword, this.SALT),
-        user: {
-          connect: user,
-        },
-      },
-    });
-  }
-
-  getCredentialByTitleAndUserId(userId: number, title: string) {
-    return this.prisma.credential.findFirst({
-      where: {
-        title,
-        userId,
-      },
-      include: {
-        user: true,
-      },
-    });
-  }
-
-  getCredentialsByUserId(userId: number) {
-    return this.prisma.credential.findMany({
-      where: { userId },
-      include: {
-        user: true,
-      },
-    });
-  }*/

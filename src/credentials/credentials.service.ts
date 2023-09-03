@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { User } from '@prisma/client';
@@ -52,8 +57,25 @@ export class CredentialsService {
     return this.formatCredentials(credentials);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} credential`;
+  async getCredentialsByCredentialId(user: User, id: number) {
+    const credential =
+      await this.credentialsRepository.getCredentialsByCredentialId(id);
+
+    if (!credential) throw new NotFoundException('credential not found');
+    if (user.id !== credential.userId) {
+      throw new ForbiddenException(
+        'This credential does not belong to this user',
+      );
+    }
+
+    return {
+      id: credential.id,
+      title: credential.title,
+      siteUrl: credential.siteUrl,
+      username: credential.username,
+      sitePassword: this.cryptr.decrypt(credential.sitePassword),
+      userId: credential.userId,
+    };
   }
 
   update(id: number, updateCredentialDto: UpdateCredentialDto) {
@@ -78,31 +100,3 @@ export class CredentialsService {
     });
   }
 }
-/*async createCredential(user: User, credentialDto: CreateCredentialDto) {
-    const { title } = credentialDto;
-    const userId = user.id;
-    const encryptedPassword = this.cryptor.encrypt(credentialDto.sitePassword);
-    const checkCredential =
-      await this.credentialsRepository.getCredentialByTitleAndUserId(
-        userId,
-        title,
-      );
-
-    if (checkCredential) {
-      throw new ConflictException('title already exists');
-    }
-
-    const newCredential = await this.credentialsRepository.createCredential(
-      user,
-      credentialDto,
-    );
-
-    return {
-      id: newCredential.id,
-      title: newCredential.title,
-      siteUrl: newCredential.siteUrl,
-      username: newCredential.username,
-      sitePassword: newCredential.sitePassword,
-      userId: newCredential.userId,
-    };
-  }*/

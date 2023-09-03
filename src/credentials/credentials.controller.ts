@@ -18,12 +18,11 @@ import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
 
 @Controller('credentials')
-//@UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class CredentialsController {
   constructor(private readonly credentialsService: CredentialsService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   async createCredential(
     @Body() credentialDto: CreateCredentialDto,
     @User() user: UserPrisma,
@@ -40,14 +39,19 @@ export class CredentialsController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   async findAllCredentialByUser(@User() user: UserPrisma) {
     return await this.credentialsService.getCredentialsByUserId(user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.credentialsService.findOne(+id);
+  async getCredentialsByCredentialId(
+    @User() user: UserPrisma,
+    @Param('id') id: string,
+  ) {
+    return await this.credentialsService.getCredentialsByCredentialId(
+      user,
+      +id,
+    );
   }
 
   @Patch(':id')
