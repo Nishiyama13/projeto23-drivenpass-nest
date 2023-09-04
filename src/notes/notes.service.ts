@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
+//import { UpdateNoteDto } from './dto/update-note.dto';
 import Cryptr from 'cryptr';
 import { NotesRepository } from './notes.repository';
 import { User } from '@prisma/client';
@@ -49,7 +49,6 @@ export class NotesService {
     notes = await this.notesRepository.getNotesByUserId(userId);
     return this.formatNotes(notes);
   }
-  //getNotesByNoteId
 
   async getNotesByNoteId(user: User, id: number) {
     const note = await this.notesRepository.getNotesByNoteId(id);
@@ -66,12 +65,20 @@ export class NotesService {
     };
   }
 
+  /*
   update(id: number, updateNoteDto: UpdateNoteDto) {
     return `This action updates a #${id} note ${updateNoteDto}`;
   }
+  */
 
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+  async deleteNoteById(user: User, id: number) {
+    const note = await this.notesRepository.getNotesByNoteId(id);
+    if (!note) throw new NotFoundException('Note not found');
+    if (user.id !== note.userId) {
+      throw new ForbiddenException('This note does not belong to this user');
+    }
+
+    return this.notesRepository.deleteNoteById(id);
   }
 
   private formatNotes(notes: NoteWithUser[]) {

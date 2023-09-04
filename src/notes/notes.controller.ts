@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -12,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
+//import { UpdateNoteDto } from './dto/update-note.dto';
 import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
@@ -42,13 +41,15 @@ export class NotesController {
     return await this.notesService.getNotesByNoteId(user, +id);
   }
 
-  @Patch(':id')
+  /*
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateNoteDto: UpdateNoteDto) {
     return this.notesService.update(+id, updateNoteDto);
   }
+  */
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notesService.remove(+id);
+  async deleteNoteById(@User() user: UserPrisma, @Param('id') id: string) {
+    return await this.notesService.deleteNoteById(user, +id);
   }
 }

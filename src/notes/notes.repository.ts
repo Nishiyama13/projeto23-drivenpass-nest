@@ -53,7 +53,12 @@ export class NotesRepository {
     return `This action updates a #${id} note ${updateNoteDto}`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+  deleteNoteById(id: number) {
+    return this.prisma.note.delete({
+      where: { id },
+      include: {
+        user: true,
+      },
+    });
   }
 }
