@@ -16,6 +16,7 @@ import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
 import { ReturnCardFormatDateDto } from './dto/return-card-Date.dto';
+import { IdValidationPipe } from '../pipes/id-validation.pipe';
 
 @Controller('cards')
 @UseGuards(AuthGuard)
@@ -41,7 +42,10 @@ export class CardsController {
   }
 
   @Get(':id')
-  async getCardByCardId(@User() user: UserPrisma, @Param('id') id: string) {
+  async getCardByCardId(
+    @User() user: UserPrisma,
+    @Param('id', new IdValidationPipe()) id: number,
+  ) {
     return await this.cardsService.getCardByCardId(user, +id);
   }
 
@@ -53,7 +57,10 @@ export class CardsController {
   */
 
   @Delete(':id')
-  async deleteCardById(@User() user: UserPrisma, @Param('id') id: string) {
+  async deleteCardById(
+    @User() user: UserPrisma,
+    @Param('id', new IdValidationPipe()) id: number,
+  ) {
     return await this.cardsService.deleteCardById(user, +id);
   }
 }

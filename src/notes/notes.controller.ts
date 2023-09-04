@@ -15,6 +15,7 @@ import { CreateNoteDto } from './dto/create-note.dto';
 import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
+import { IdValidationPipe } from '../pipes/id-validation.pipe';
 
 @Controller('notes')
 @UseGuards(AuthGuard)
@@ -37,7 +38,10 @@ export class NotesController {
   }
 
   @Get(':id')
-  async getNotesByNoteId(@User() user: UserPrisma, @Param('id') id: string) {
+  async getNotesByNoteId(
+    @User() user: UserPrisma,
+    @Param('id', new IdValidationPipe()) id: number,
+  ) {
     return await this.notesService.getNotesByNoteId(user, +id);
   }
 
@@ -49,7 +53,10 @@ export class NotesController {
   */
 
   @Delete(':id')
-  async deleteNoteById(@User() user: UserPrisma, @Param('id') id: string) {
+  async deleteNoteById(
+    @User() user: UserPrisma,
+    @Param('id', new IdValidationPipe()) id: number,
+  ) {
     return await this.notesService.deleteNoteById(user, +id);
   }
 }

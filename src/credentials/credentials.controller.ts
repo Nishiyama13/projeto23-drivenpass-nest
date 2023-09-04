@@ -15,6 +15,7 @@ import { CreateCredentialDto } from './dto/create-credential.dto';
 import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
+import { IdValidationPipe } from '../pipes/id-validation.pipe';
 
 @Controller('credentials')
 @UseGuards(AuthGuard)
@@ -45,7 +46,7 @@ export class CredentialsController {
   @Get(':id')
   async getCredentialByCredentialId(
     @User() user: UserPrisma,
-    @Param('id') id: string,
+    @Param('id', new IdValidationPipe()) id: number,
   ) {
     return await this.credentialsService.getCredentialByCredentialId(user, +id);
   }
@@ -63,7 +64,7 @@ export class CredentialsController {
   @Delete(':id')
   async deleteCredencialById(
     @User() user: UserPrisma,
-    @Param('id') id: string,
+    @Param('id', new IdValidationPipe()) id: number,
   ) {
     return this.credentialsService.deleteCredencialById(user, +id);
   }
