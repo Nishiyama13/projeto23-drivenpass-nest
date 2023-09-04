@@ -16,7 +16,6 @@ import { UpdateCardDto } from './dto/update-card.dto';
 import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
-//import { CreateCardFormatDateDto } from './dto/create-card-format-Date.dto';
 import { ReturnCardFormatDateDto } from './dto/return-card-Date.dto';
 
 @Controller('cards')

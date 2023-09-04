@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -12,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CredentialsService } from './credentials.service';
 import { CreateCredentialDto } from './dto/create-credential.dto';
-import { UpdateCredentialDto } from './dto/update-credential.dto';
+//import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
@@ -44,26 +43,28 @@ export class CredentialsController {
   }
 
   @Get(':id')
-  async getCredentialsByCredentialId(
+  async getCredentialByCredentialId(
     @User() user: UserPrisma,
     @Param('id') id: string,
   ) {
-    return await this.credentialsService.getCredentialsByCredentialId(
-      user,
-      +id,
-    );
+    return await this.credentialsService.getCredentialByCredentialId(user, +id);
   }
 
-  @Patch(':id')
+  /*
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateCredentialDto: UpdateCredentialDto,
   ) {
     return this.credentialsService.update(+id, updateCredentialDto);
   }
+  */
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.credentialsService.remove(+id);
+  async deleteCredencialById(
+    @User() user: UserPrisma,
+    @Param('id') id: string,
+  ) {
+    return this.credentialsService.deleteCredencialById(user, +id);
   }
 }

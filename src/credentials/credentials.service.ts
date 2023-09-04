@@ -57,9 +57,9 @@ export class CredentialsService {
     return this.formatCredentials(credentials);
   }
 
-  async getCredentialsByCredentialId(user: User, id: number) {
+  async getCredentialByCredentialId(user: User, id: number) {
     const credential =
-      await this.credentialsRepository.getCredentialsByCredentialId(id);
+      await this.credentialsRepository.getCredentialByCredentialId(id);
 
     if (!credential) throw new NotFoundException('credential not found');
     if (user.id !== credential.userId) {
@@ -78,12 +78,22 @@ export class CredentialsService {
     };
   }
 
+  /*
   update(id: number, updateCredentialDto: UpdateCredentialDto) {
     return `This action updates a #${id} credential ${updateCredentialDto}`;
-  }
+  }*/
 
-  remove(id: number) {
-    return `This action removes a #${id} credential`;
+  async deleteCredencialById(user: User, id: number) {
+    const credential =
+      await this.credentialsRepository.getCredentialByCredentialId(id);
+    if (!credential) throw new NotFoundException('credential not found');
+    if (user.id !== credential.userId) {
+      throw new ForbiddenException(
+        'This credential does not belong to this user',
+      );
+    }
+
+    return this.credentialsRepository.deleteCredencialById(id);
   }
 
   private formatCredentials(credentials: CredentialWithUser[]) {
