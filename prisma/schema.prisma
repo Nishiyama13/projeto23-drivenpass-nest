@@ -55,12 +55,12 @@ model Note {
 }
 
 model Card {
-  id             Int     @id @default(autoincrement())
-  title          String
+  id             Int      @id @default(autoincrement())
+  title          String   @unique
   cardName       String
   cardNumber     String
-  securityCode   String
-  expirationDate String
+  cvv            String
+  expirationDate DateTime
   cardPassword   String
   isVirtual      Boolean
   type           String
