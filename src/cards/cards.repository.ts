@@ -40,8 +40,13 @@ export class CardsRepository {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} card`;
+  getCardByCardId(id: number) {
+    return this.prisma.card.findUnique({
+      where: { id },
+      include: {
+        user: true,
+      },
+    });
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {

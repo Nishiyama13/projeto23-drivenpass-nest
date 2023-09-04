@@ -1,11 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { CardsRepository } from './cards.repository';
 import Cryptr from 'cryptr';
 import { User } from '@prisma/client';
 import { CardWithUser } from './interfaces/cards-with-user.interface';
-//import { CreateCardFormatDateDto } from './dto/create-card-format-Date.dto';
 import { ReturnCardFormatDateDto } from './dto/return-card-Date.dto';
 
 @Injectable()
@@ -67,9 +71,9 @@ export class CardsService {
       title: newCard.title,
       cardName: newCard.cardName,
       cardNumber: newCard.cardNumber,
-      cvv: this.cryptr.decrypt(newCard.cvv),
+      cvv: newCard.cvv,
       expirationDate: newCard.expirationDate,
-      cardPassword: this.cryptr.decrypt(newCard.cardPassword),
+      cardPassword: newCard.cardPassword,
       isVirtual: newCard.isVirtual,
       type: newCard.type,
       userId: newCard.userId,
@@ -83,8 +87,26 @@ export class CardsService {
     return this.formatCards(cards);
   }
 
-  getCardByCardId(user: User, id: number) {
-    return `This action returns a #${id} card`;
+  async getCardByCardId(user: User, id: number) {
+    const card = await this.cardsRepository.getCardByCardId(id);
+
+    if (!card) throw new NotFoundException('credential not found');
+    if (user.id !== card.userId) {
+      throw new ForbiddenException('This card does not belong to this user');
+    }
+
+    return {
+      id: card.id,
+      title: card.title,
+      cardName: card.cardName,
+      cardNumber: card.cardNumber,
+      cvv: this.cryptr.decrypt(card.cvv),
+      expirationDate: card.expirationDate,
+      cardPassword: this.cryptr.decrypt(card.cardPassword),
+      isVirtual: card.isVirtual,
+      type: card.type,
+      userId: card.userId,
+    };
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {
