@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
-import { UpdateCardDto } from './dto/update-card.dto';
+//import { UpdateCardDto } from './dto/update-card.dto';
 import { CardsRepository } from './cards.repository';
 import Cryptr from 'cryptr';
 import { User } from '@prisma/client';
@@ -90,7 +90,7 @@ export class CardsService {
   async getCardByCardId(user: User, id: number) {
     const card = await this.cardsRepository.getCardByCardId(id);
 
-    if (!card) throw new NotFoundException('credential not found');
+    if (!card) throw new NotFoundException('card not found');
     if (user.id !== card.userId) {
       throw new ForbiddenException('This card does not belong to this user');
     }
@@ -109,11 +109,19 @@ export class CardsService {
     };
   }
 
+  /*
   update(id: number, updateCardDto: UpdateCardDto) {
     return `This action updates a #${id} card ${updateCardDto}`;
   }
+  */
 
-  remove(id: number) {
-    return `This action removes a #${id} card`;
+  async deleteCardById(user: User, id: number) {
+    const card = await this.cardsRepository.getCardByCardId(id);
+    if (!card) throw new NotFoundException('card not found');
+    if (user.id !== card.userId) {
+      throw new ForbiddenException('This card does not belong to this user');
+    }
+
+    return this.cardsRepository.deleteCardById(id);
   }
 }

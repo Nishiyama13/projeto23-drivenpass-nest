@@ -53,7 +53,12 @@ export class CardsRepository {
     return `This action updates a #${id} card ${updateCardDto}`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} card`;
+  deleteCardById(id: number) {
+    return this.prisma.card.delete({
+      where: { id },
+      include: {
+        user: true,
+      },
+    });
   }
 }

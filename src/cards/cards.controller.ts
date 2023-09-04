@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -12,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { CreateCardDto } from './dto/create-card.dto';
-import { UpdateCardDto } from './dto/update-card.dto';
+//import { UpdateCardDto } from './dto/update-card.dto';
 import { AuthGuard } from '../guard/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
@@ -46,13 +45,15 @@ export class CardsController {
     return await this.cardsService.getCardByCardId(user, +id);
   }
 
-  @Patch(':id')
+  /*
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
     return this.cardsService.update(+id, updateCardDto);
   }
+  */
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cardsService.remove(+id);
+  async deleteCardById(@User() user: UserPrisma, @Param('id') id: string) {
+    return await this.cardsService.deleteCardById(user, +id);
   }
 }
