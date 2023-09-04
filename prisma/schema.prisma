@@ -37,12 +37,13 @@ model Credential {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([title, userId])
   @@map("credentials")
 }
 
 model Note {
   id    Int    @id @default(autoincrement())
-  title String @unique
+  title String
   text  String
 
   user   User @relation(fields: [userId], references: [id])
@@ -51,12 +52,13 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([title, userId])
   @@map("notes")
 }
 
 model Card {
   id             Int      @id @default(autoincrement())
-  title          String   @unique
+  title          String
   cardName       String
   cardNumber     String
   cvv            String
@@ -71,5 +73,6 @@ model Card {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([title, userId])
   @@map("cards")
 }
