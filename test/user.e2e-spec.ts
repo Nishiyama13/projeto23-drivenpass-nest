@@ -6,6 +6,7 @@ import { E2EUtils } from './utils/e2e-utils';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { CreateUserDto } from '../src/users/dto/login.dto';
 import { UserFactory } from './factories/user.factory';
+import * as bcrypt from 'bcrypt';
 
 describe('User E2E Tests', () => {
   let app: INestApplication;
@@ -61,9 +62,11 @@ describe('User E2E Tests', () => {
       password: '$enh@Br@b!ssim4',
     };
 
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
     const response = await supertest(app.getHttpServer())
       .post('/users/sign-up')
-      .send(userData)
+      .send({ email: userData.email, password: hashedPassword })
       .expect(HttpStatus.CREATED);
     expect(response.body.email).toEqual(userData.email);
   });
