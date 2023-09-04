@@ -1,35 +1,20 @@
-/*import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/*import { Controller, Delete, UseGuards, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/login.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '../guard/auth.guard';
+import { User } from '../decorators/user.decorator';
+import { User as UserPrisma } from '@prisma/client';
+import { DeleteUserDto } from '../erase/dto/delete-user.dto';
 
-@Controller('users')
+@Controller('erase')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @UseGuards(AuthGuard)
+  async deleteUser(
+    @Body() deleteUserDto: DeleteUserDto,
+    @User() user: UserPrisma,
+  ) {
+    return await this.usersService.deleteUser(user, deleteUserDto);
   }
-}
-*/
+}*/

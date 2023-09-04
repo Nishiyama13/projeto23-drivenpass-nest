@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -79,6 +80,18 @@ export class NotesService {
     }
 
     return this.notesRepository.deleteNoteById(id);
+  }
+
+  async deleteAllNoteByUserId(userId: number) {
+    let notes: NoteWithUser[] = [];
+    notes = await this.notesRepository.getNotesByUserId(userId);
+    if (notes.length > 0) {
+      const isClean = await this.notesRepository.deleteAllNoteByUserId(userId);
+      if (!isClean) {
+        throw new InternalServerErrorException('Ops erro ao apagar notes');
+      }
+    }
+    return true;
   }
 
   private formatNotes(notes: NoteWithUser[]) {

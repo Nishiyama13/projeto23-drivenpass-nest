@@ -61,4 +61,10 @@ export class CardsRepository {
       },
     });
   }
+
+  deleteAllCardsByUserId(userId: number) {
+    return this.prisma.card.deleteMany({
+      where: { userId },
+    });
+  }
 }

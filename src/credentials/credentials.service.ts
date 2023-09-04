@@ -2,10 +2,11 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
-import { UpdateCredentialDto } from './dto/update-credential.dto';
+//import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { User } from '@prisma/client';
 import { CredentialsRepository } from './credentials.repository';
 import { CredentialWithUser } from './interfaces/credentials-with-user.interface';
@@ -81,7 +82,8 @@ export class CredentialsService {
   /*
   update(id: number, updateCredentialDto: UpdateCredentialDto) {
     return `This action updates a #${id} credential ${updateCredentialDto}`;
-  }*/
+  }
+  */
 
   async deleteCredencialById(user: User, id: number) {
     const credential =
@@ -94,6 +96,22 @@ export class CredentialsService {
     }
 
     return this.credentialsRepository.deleteCredencialById(id);
+  }
+
+  async deleteAllCredencialsByUserId(userId: number) {
+    let credentials: CredentialWithUser[] = [];
+    credentials =
+      await this.credentialsRepository.getCredentialsByUserId(userId);
+    if (credentials.length > 0) {
+      const isClean =
+        await this.credentialsRepository.deleteAllCredencialsByUserId(userId);
+      if (!isClean) {
+        throw new InternalServerErrorException(
+          'Ops erro ao apagar credentials',
+        );
+      }
+    }
+    return true;
   }
 
   private formatCredentials(credentials: CredentialWithUser[]) {

@@ -8,5 +8,6 @@ import { UsersModule } from '../users/users.module';
   imports: [UsersModule],
   controllers: [CardsController],
   providers: [CardsService, CardsRepository],
+  exports: [CardsService],
 })
 export class CardsModule {}

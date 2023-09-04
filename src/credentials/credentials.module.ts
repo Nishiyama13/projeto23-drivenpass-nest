@@ -8,5 +8,6 @@ import { CredentialsRepository } from './credentials.repository';
   imports: [UsersModule],
   controllers: [CredentialsController],
   providers: [CredentialsService, CredentialsRepository],
+  exports: [CredentialsService],
 })
 export class CredentialsModule {}

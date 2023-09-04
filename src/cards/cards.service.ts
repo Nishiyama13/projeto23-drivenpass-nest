@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
@@ -123,5 +124,17 @@ export class CardsService {
     }
 
     return this.cardsRepository.deleteCardById(id);
+  }
+
+  async deleteAllCardsByUserId(userId: number) {
+    let cards: CardWithUser[] = [];
+    cards = await this.cardsRepository.getAllCardsByUserId(userId);
+    if (cards.length > 0) {
+      const isClean = await this.cardsRepository.deleteAllCardsByUserId(userId);
+      if (!isClean) {
+        throw new InternalServerErrorException('Ops erro ao apagar cards');
+      }
+    }
+    return true;
   }
 }
